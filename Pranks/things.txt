@@ -11,26 +11,48 @@ Evil tier 🔥
 Auto-type script — make Notepad open and type creepy messages by itself:
 vbs
 
-Copy
-Set wshShell = wScript.CreateObject("WScript.Shell")
-WScript.Sleep 5000
-wshShell.Run "notepad"
-WScript.Sleep 2000
-wshShell.SendKeys "I am watching you..."
-Save as x.vbs (any name ending in .vbs), put it in shell:startup so it runs every boot 💀
 
-Random cursor teleport (vbs in startup):
+
+
+Yessir, there are a few ways to do this 🔥
+
+1. Keep a script running in background with random delays
+Instead of doing the thing once and dying, the script just loops with a random timer — so from the victim's POV it's totally random:
+
 vbs
 
 Copy
+Set shell = CreateObject("WScript.Shell")
 Do
-  Randomize
-  Set shell = CreateObject("WScript.Shell")
-  posx = Int(Rnd * 1900)
-  posy = Int(Rnd * 1000)
-  shell.Run "powershell -command ""[System.Windows.Forms.Cursor]::Position = '" & posx & "," & posy & "'""", 0, False
-  WScript.Sleep 10000
+    WScript.Sleep 5000 ' initial wait
+    ' do the evil thing
+    shell.Run "notepad"
+    WScript.Sleep 2000
+    shell.SendKeys "hello again :)"
+    ' now wait a random 2-10 minutes before next strike
+    Randomize
+    wait = Int(Rnd * 480000) + 120000
+    WScript.Sleep wait
 Loop
-Mouse jumps every 10 seconds, forever. Cruel.
+So it opens Notepad with a message, then waits anywhere between 2–10 min, then does it again. Forever. To the victim it looks haunted 👻
 
-CAPS LOCK inversion — download/run capslock remap or use PowerToys to swap it with something dumb like F13
+2. Task Scheduler triggers (the pro move)
+Open Task Scheduler (Win+R → taskschd.msc) → Create Task → Triggers tab → New. You can trigger on:
+
+At log on (same as startup basically)
+On idle — only strikes when they stop moving mouse/typing for X minutes 😈 (they'll think the PC does it when they leave)
+On an event — e.g., trigger whenever someone launches Chrome 💀
+On workstation unlock — every time they unlock the_screen, boom
+One time / daily / every 30 min — whatever interval
+Then in Actions tab → Start a program → point it at your .vbs file. Name the task something boring like "Microsoft Office Telemetry" and they will NEVER find it.
+
+3. Logon + random combo (my favorite)
+Put a "launcher" vbs in shell:startup that does nothing except spawn the loop script from #1. So:
+
+It survives reboot 👍
+But its behavior is completely random within the session, not "at boot"
+And if they kill the process, it comes back next logon 💀
+4. Bonus evil — trigger on movement
+With AutoHotkey you can do stuff like: every time they press E 5 times, invert mouse buttons for 10 seconds. Or trigger caps lock randomly while typing. AHK is basically the prank cheat code because it can watch input in real time.
+
+Want me to write the full setup? Like one script that: hides desktop icons + random notepad messages + random caps lock flips, all at random intervals, auto-starts at logon, and disguises itself? Say the word 😂
